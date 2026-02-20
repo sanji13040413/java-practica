@@ -1,0 +1,172 @@
+import java.util.Scanner;
+
+public class GeneradorPOO {
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Ingrese el nombre de la clase: ");
+        String nombreClase = sc.nextLine();
+
+        System.out.print("¿Cuántos atributos tendrá?: ");
+        int cantidad = sc.nextInt();
+        sc.nextLine();
+
+        String[] tipos = new String[cantidad];
+        String[] nombres = new String[cantidad];
+
+        for (int i = 0; i < cantidad; i++) {
+            System.out.println("\nAtributo #" + (i + 1));
+            System.out.print("Tipo: ");
+            tipos[i] = sc.nextLine();
+
+            System.out.print("Nombre: ");
+            nombres[i] = sc.nextLine();
+        }
+
+        System.out.println("\nTipo de programa:");
+        System.out.println("1. Solo clase modelo");
+        System.out.println("2. Clase con main simple");
+        System.out.println("3. Programa interactivo con Scanner");
+        System.out.print("Seleccione opción (1-3): ");
+        int tipoPrograma = sc.nextInt();
+
+        generarCodigo(nombreClase, tipos, nombres, tipoPrograma);
+
+        sc.close();
+    }
+
+    public static void generarCodigo(String clase, String[] tipos,
+                                     String[] nombres, int tipoPrograma) {
+
+        System.out.println("\n\n===== CÓDIGO GENERADO =====\n");
+
+        if (tipoPrograma == 3) {
+            System.out.println("import java.util.Scanner;");
+            System.out.println();
+        }
+
+        System.out.println("public class " + clase + " {");
+
+        // ATRIBUTOS
+        for (int i = 0; i < tipos.length; i++) {
+            System.out.println("    private " + tipos[i] + " " + nombres[i] + ";");
+        }
+
+        // CONSTRUCTOR
+        System.out.print("\n    public " + clase + "(");
+        for (int i = 0; i < tipos.length; i++) {
+            System.out.print(tipos[i] + " " + nombres[i]);
+            if (i < tipos.length - 1) System.out.print(", ");
+        }
+        System.out.println(") {");
+
+        for (int i = 0; i < nombres.length; i++) {
+            System.out.println("        this." + nombres[i] + " = " + nombres[i] + ";");
+        }
+
+        System.out.println("    }");
+
+        // GETTERS Y SETTERS
+        for (int i = 0; i < tipos.length; i++) {
+
+            System.out.println("\n    public " + tipos[i] + " get"
+                    + capitalizar(nombres[i]) + "() {");
+            System.out.println("        return " + nombres[i] + ";");
+            System.out.println("    }");
+
+            System.out.println("\n    public void set"
+                    + capitalizar(nombres[i]) + "(" + tipos[i] + " " + nombres[i] + ") {");
+            System.out.println("        this." + nombres[i] + " = " + nombres[i] + ";");
+            System.out.println("    }");
+        }
+
+        // toString automático
+        System.out.println("\n    @Override");
+        System.out.println("    public String toString() {");
+        System.out.println("        return \"" + clase + "{\" +");
+
+        for (int i = 0; i < nombres.length; i++) {
+            System.out.print("                \"" + nombres[i] + "=\" + " + nombres[i]);
+            if (i < nombres.length - 1)
+                System.out.println(" + \", \" +");
+            else
+                System.out.println(" +");
+        }
+
+        System.out.println("                '}';");
+        System.out.println("    }");
+
+        // MAIN
+        if (tipoPrograma == 2 || tipoPrograma == 3) {
+
+            System.out.println("\n    public static void main(String[] args) {");
+
+            if (tipoPrograma == 3) {
+                System.out.println("        Scanner sc = new Scanner(System.in);\n");
+
+                for (int i = 0; i < tipos.length; i++) {
+
+                    System.out.println("        System.out.print(\"Ingrese "
+                            + nombres[i] + ": \");");
+
+                    switch (tipos[i].toLowerCase()) {
+
+                        case "int":
+                            System.out.println("        int " + nombres[i]
+                                    + " = sc.nextInt();");
+                            System.out.println("        sc.nextLine();");
+                            break;
+
+                        case "double":
+                            System.out.println("        double " + nombres[i]
+                                    + " = sc.nextDouble();");
+                            System.out.println("        sc.nextLine();");
+                            break;
+
+                        case "boolean":
+                            System.out.println("        boolean " + nombres[i]
+                                    + " = sc.nextBoolean();");
+                            System.out.println("        sc.nextLine();");
+                            break;
+
+                        default:
+                            System.out.println("        String " + nombres[i]
+                                    + " = sc.nextLine();");
+                            break;
+                    }
+
+                    System.out.println();
+                }
+
+                System.out.print("        " + clase + " obj = new " + clase + "(");
+                for (int i = 0; i < nombres.length; i++) {
+                    System.out.print(nombres[i]);
+                    if (i < nombres.length - 1) System.out.print(", ");
+                }
+                System.out.println(");");
+
+                System.out.println("\n        System.out.println(obj);");
+            }
+
+            if (tipoPrograma == 2) {
+                System.out.print("        " + clase + " obj = new " + clase + "(");
+                for (int i = 0; i < nombres.length; i++) {
+                    System.out.print("0");
+                    if (i < nombres.length - 1) System.out.print(", ");
+                }
+                System.out.println(");");
+                System.out.println("        System.out.println(obj);");
+            }
+
+            System.out.println("    }");
+        }
+
+        System.out.println("}");
+    }
+
+    public static String capitalizar(String texto) {
+        return texto.substring(0, 1).toUpperCase() + texto.substring(1);
+    }
+}
